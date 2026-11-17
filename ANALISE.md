@@ -6,4 +6,4 @@ O código R de 2024 considera alcançada a meta cujo valor é 1. A porcentagem p
 
 O relatório de referência também inclui metodologia, análise textual, recursos financeiros e considerações finais. A adaptação para 2025 precisa validar as regras específicas desse ano e identificar a origem e o significado dos valores financeiros antes de produzir conclusões. Mapas exigem uma fonte geográfica de municípios compatível com os códigos da base.
 
-Ainda falta implementar, testar e validar o painel, o relatório, a importação de planilhas e o deploy. Os anexos não foram adicionados ao repositório.
+O painel e uma síntese automatizada foram implementados. A planilha de 2025 acompanha o repositório. A síntese requer revisão técnica e financeira antes de uso oficial; não reproduz integralmente a interpretação editorial do relatório original. A publicação na Vercel ainda precisa ser realizada.
