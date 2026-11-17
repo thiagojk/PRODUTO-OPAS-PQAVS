@@ -22,9 +22,15 @@ test('Word inclui seções, valores da base, texto editado, municípios e imagen
  assert.match(xml,/853/);
  assert.match(xml,/616/);
  assert.match(xml,/Serra da Saudade/);
- assert.match(xml,/No mapa do indicador 14/);
+ assert.match(xml,/De acordo com a Figura 15, no mapa do indicador 14/);
  assert.match(xml,/maior número de municípios/);
- assert.match(xml,/Entre os 20 municípios mais populosos/);
+ assert.match(xml,/entre os 20 municípios mais populosos/);
+ assert.match(xml,/R\$\s6\.673\.500,68/);
+ assert.match(xml,/no estrato de 100%/);
+ assert.ok(xml.indexOf('Segundo a Tabela 2') < xml.indexOf('Tabela 2 – Número de municípios'));
+ assert.ok(xml.indexOf('De acordo com o Gráfico 1') < xml.indexOf('Gráfico 1 – Número de metas'));
+ assert.ok(xml.indexOf('De acordo com a Figura 15') < xml.indexOf('Figura 15 – Distribuição espacial'));
+ assert.match(xml,/<w:jc w:val="both"\/>/);
  assert.equal((xml.match(/<w:drawing>/g)||[]).length,16);
 });
 
@@ -35,6 +41,7 @@ test('análises são geradas para todas as UFs e preservam empates e dados ausen
   assert.match(model.summaries.population,new RegExp(rows.length.toLocaleString('pt-BR').replace('.', '\\.')));
   assert.equal(model.achieved.length,14);
   assert.ok(model.summaries.top.length>50);
+  if(data.stateFinance[uf]) assert.equal(model.stateAmount,data.stateFinance[uf].find(v=>v>0));
  }
  const rows=[{code:'123456',name:'A',pop:10000,goals:Array(14).fill(1),value:null},{code:'123457',name:'B',pop:null,goals:Array(14).fill(null),value:null}];
  const map=summarizeMaps({features:[{properties:{id:'1234560'}},{properties:{id:'9999990'}}]},rows);
@@ -45,4 +52,8 @@ test('análises são geradas para todas as UFs e preservam empates e dados ausen
  const model=buildReport(data2,'MG',rows,calculate(rows));
  assert.match(model.summaries.general,/indicador 1, indicador 2/);
  assert.match(model.finance,/valor indisponível/);
+ assert.equal(model.stateAmount,null);
+ const ambiguous=buildReport({...data2,stateFinance:{MG:[1,2,0,0]}},'MG',rows,calculate(rows));
+ assert.equal(ambiguous.stateAmount,null);
+ assert.match(ambiguous.finance,/não pode ser determinado/);
 });
