@@ -1,0 +1,27 @@
+{
+  "name": "produto-opas-pqavs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thiagojk/PRODUTO-OPAS-PQAVS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/thiagojk/PRODUTO-OPAS-PQAVS/issues"
+  },
+  "homepage": "https://github.com/thiagojk/PRODUTO-OPAS-PQAVS#readme",
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "vite": "^8.3.8",
+    "xlsx": "^0.18.5"
+  }
+}
