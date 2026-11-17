@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {unzipSync,strFromU8} from 'fflate';
 import {readWorkbook,calculate} from './data.js';
-import {buildReport} from './reportModel.js';
+import {buildReport,summarizeMaps} from './reportModel.js';
 import {createReportDocument} from './reportWord.js';
 
 test('Word inclui seções, valores da base, texto editado, municípios e imagens',async()=>{
@@ -22,5 +22,27 @@ test('Word inclui seções, valores da base, texto editado, municípios e imagen
  assert.match(xml,/853/);
  assert.match(xml,/616/);
  assert.match(xml,/Serra da Saudade/);
+ assert.match(xml,/No mapa do indicador 14/);
+ assert.match(xml,/maior número de municípios/);
+ assert.match(xml,/Entre os 20 municípios mais populosos/);
  assert.equal((xml.match(/<w:drawing>/g)||[]).length,16);
+});
+
+test('análises são geradas para todas as UFs e preservam empates e dados ausentes',async()=>{
+ const data=readWorkbook(await readFile('public/PQAVS_2025_Final.xlsx'));
+ for(const uf of new Set(data.rows.map(r=>r.uf))){
+  const rows=data.rows.filter(r=>r.uf===uf), model=buildReport(data,uf,rows,calculate(rows));
+  assert.match(model.summaries.population,new RegExp(rows.length.toLocaleString('pt-BR').replace('.', '\\.')));
+  assert.equal(model.achieved.length,14);
+  assert.ok(model.summaries.top.length>50);
+ }
+ const rows=[{code:'123456',name:'A',pop:10000,goals:Array(14).fill(1),value:null},{code:'123457',name:'B',pop:null,goals:Array(14).fill(null),value:null}];
+ const map=summarizeMaps({features:[{properties:{id:'1234560'}},{properties:{id:'9999990'}}]},rows);
+ assert.match(map.indicators[0],/1 áreas municipais aparecem como meta alcançada, 0 como não alcançada e 1 como sem informação/);
+ assert.match(map.indicators[0],/1 registros da base não possuem correspondência/);
+ assert.match(map.population,/1 áreas sem informação populacional/);
+ const data2={year:'2025',indicators:Array.from({length:14},(_,i)=>({name:`Indicador ${i+1}`,target:''})),stateFinance:{}};
+ const model=buildReport(data2,'MG',rows,calculate(rows));
+ assert.match(model.summaries.general,/indicador 1, indicador 2/);
+ assert.match(model.finance,/valor indisponível/);
 });
